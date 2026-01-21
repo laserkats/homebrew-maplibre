@@ -28,7 +28,7 @@ class MapLibre < Formula
     "-DMLN_WITH_METAL=ON",
     "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
     "-DCMAKE_C_COMPILER=gcc",
-    "-DCMAKE_CXX_COMPILER=g++"
+    "-DCMAKE_CXX_COMPILER=g++",
      # "-DCMAKE_EXE_LINKER_FLAGS=-framework OpenGL -framework CoreGraphics -framework CoreFoundation",
      *std_cmake_args
     system "cmake", "--build", "build", "--target", "mbgl-render", "-j#{ENV.make_jobs}"
