@@ -1,4 +1,4 @@
-class MapLibre < Formula
+class Maplibre < Formula
   desc "MapLibre Native static map renderer CLI"
   homepage "https://github.com/maplibre/maplibre-native"
   url "https://github.com/maplibre/maplibre-native.git",
@@ -8,6 +8,7 @@ class MapLibre < Formula
   license "BSD-3-Clause"
 
   depends_on "bazelisk" => :build
+  depends_on "ccache" => :build
   depends_on "cmake" => :build
   depends_on "ninja" => :build
   depends_on "pkg-config" => :build
@@ -17,20 +18,14 @@ class MapLibre < Formula
     # Initialize submodules
     system "git", "submodule", "update", "--init", "--recursive"
 
-    # Build with OpenGL backend using Ninja generator
-    # Link against OpenGL/CGL frameworks for headless rendering
-    ENV.append "LDFLAGS", "-framework OpenGL -framework CoreGraphics -framework CoreFoundation"
-
+    # Build with Metal backend using Ninja generator
+    # Disable GLFW platform to avoid FetchContent dependencies
     system "cmake", "-B", "build", "-G", "Ninja",
-    "-DCMAKE_BUILD_TYPE=Release",
-    "-DMLN_WITH_NODE=ON",
-    "-DMLN_WITH_OPENGL=ON",
-    "-DMLN_WITH_METAL=ON",
-    "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
-    "-DCMAKE_C_COMPILER=gcc",
-    "-DCMAKE_CXX_COMPILER=g++",
-     # "-DCMAKE_EXE_LINKER_FLAGS=-framework OpenGL -framework CoreGraphics -framework CoreFoundation",
-     *std_cmake_args
+           "-DCMAKE_BUILD_TYPE=Release",
+           "-DMLN_WITH_METAL=ON",
+           "-DMLN_WITH_GLFW=OFF",
+           "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",
+           *std_cmake_args
     system "cmake", "--build", "build", "--target", "mbgl-render", "-j#{ENV.make_jobs}"
     bin.install "build/bin/mbgl-render"
   end
